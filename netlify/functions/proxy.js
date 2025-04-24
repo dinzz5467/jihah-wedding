@@ -1,6 +1,6 @@
-import fetch from 'node-fetch';
+const fetch = require("node-fetch");
 
-export async function handler(event) {
+exports.handler = async function(event, context) {
   const url = new URL(event.rawUrl);
   const target = url.searchParams.get("url");
 
@@ -29,4 +29,4 @@ export async function handler(event) {
       body: `Error: ${err.toString()}`
     };
   }
-}
+};
