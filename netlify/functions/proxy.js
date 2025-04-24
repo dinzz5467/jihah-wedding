@@ -1,6 +1,6 @@
-const fetch = require("node-fetch");
+import fetch from 'node-fetch';
 
-exports.handler = async function(event) {
+export async function handler(event) {
   const url = new URL(event.rawUrl);
   const target = url.searchParams.get("url");
 
@@ -21,7 +21,7 @@ exports.handler = async function(event) {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": "application/json"
       },
-      body: body
+      body
     };
   } catch (err) {
     return {
@@ -29,4 +29,4 @@ exports.handler = async function(event) {
       body: `Error: ${err.toString()}`
     };
   }
-};
+}
