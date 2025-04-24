@@ -11,11 +11,18 @@ exports.handler = async function(event) {
   }
 
   try {
-    const response = await fetch(url);
-    const data = await response.text(); // Use text to forward any content-type
+    const response = await fetch(url, {
+      method: event.httpMethod,
+      headers: {
+        "Content-Type": event.headers["content-type"] || "application/x-www-form-urlencoded",
+      },
+      body: ["POST", "PUT", "PATCH"].includes(event.httpMethod) ? event.body : undefined
+    });
+
+    const data = await response.text(); // For any response type, including HTML or JSON
 
     return {
-      statusCode: 200,
+      statusCode: response.status,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-Type": response.headers.get("content-type") || "text/plain",
