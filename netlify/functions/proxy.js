@@ -1,35 +1,31 @@
 const fetch = require("node-fetch");
 
-exports.handler = async function(event, context) {
-  const targetUrl = new URLSearchParams(event.queryStringParameters).get("url");
+exports.handler = async function(event) {
+  const url = event.queryStringParameters.url;
 
-  if (!targetUrl) {
+  if (!url) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: "Missing 'url' parameter" })
+      body: JSON.stringify({ error: "Missing 'url' query parameter" }),
     };
   }
 
   try {
-    const response = await fetch(targetUrl);
-    const contentType = response.headers.get("content-type") || "";
-
-    const body = contentType.includes("application/json")
-      ? await response.json()
-      : await response.text();
+    const response = await fetch(url);
+    const data = await response.text(); // Use text to forward any content-type
 
     return {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
-        "Content-Type": "application/json"
+        "Content-Type": response.headers.get("content-type") || "text/plain",
       },
-      body: typeof body === "string" ? body : JSON.stringify(body)
+      body: data,
     };
   } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message })
+      body: JSON.stringify({ error: err.message }),
     };
   }
 };
